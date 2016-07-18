@@ -33,8 +33,40 @@ from runner.koan import *
 # Your goal is to write the score method.
 
 def score(dice):
-    # You need to write this method
-    pass
+    freq = dict({1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0})
+    for d in dice:
+        freq[d] += 1
+
+    return _calcScore(freq)
+
+def _calcScore(freq):
+    non_threes_multiplier = 100
+    if freq[1] >= 3:
+        freq[1] -= 3
+        return 1000 + _calcScore(freq)
+    elif freq[2] >= 3:
+        freq[2] -= 3
+        return non_threes_multiplier * 2 + _calcScore(freq)
+    elif freq[3] >= 3:
+        freq[3] -= 3
+        return non_threes_multiplier * 3 + _calcScore(freq)
+    elif freq[4] >= 3:
+        freq[4] -= 3
+        return non_threes_multiplier * 4 + _calcScore(freq)
+    elif freq[5] >= 3:
+        freq[5] -= 3
+        return non_threes_multiplier * 5 + _calcScore(freq)
+    elif freq[6] >= 3:
+        freq[6] -= 3
+        return non_threes_multiplier * 6 + _calcScore(freq)
+    elif freq[1] > 0:
+        freq[1] -= 1;
+        return 100 + _calcScore(freq)
+    elif freq[5] > 0:
+        freq[5] -= 1;
+        return 50 + _calcScore(freq)
+    else:
+       return 0
 
 class AboutScoringProject(Koan):
     def test_score_of_an_empty_list_is_zero(self):
