@@ -33,40 +33,31 @@ from runner.koan import *
 # Your goal is to write the score method.
 
 def score(dice):
+    import functools
     freq = dict({1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0})
     for d in dice:
         freq[d] += 1
 
-    return _calcScore(freq)
+    return functools.reduce(item_scorer, freq.items(), 0)
 
-def _calcScore(freq):
-    non_threes_multiplier = 100
-    if freq[1] >= 3:
-        freq[1] -= 3
-        return 1000 + _calcScore(freq)
-    elif freq[2] >= 3:
-        freq[2] -= 3
-        return non_threes_multiplier * 2 + _calcScore(freq)
-    elif freq[3] >= 3:
-        freq[3] -= 3
-        return non_threes_multiplier * 3 + _calcScore(freq)
-    elif freq[4] >= 3:
-        freq[4] -= 3
-        return non_threes_multiplier * 4 + _calcScore(freq)
-    elif freq[5] >= 3:
-        freq[5] -= 3
-        return non_threes_multiplier * 5 + _calcScore(freq)
-    elif freq[6] >= 3:
-        freq[6] -= 3
-        return non_threes_multiplier * 6 + _calcScore(freq)
-    elif freq[1] > 0:
-        freq[1] -= 1;
-        return 100 + _calcScore(freq)
-    elif freq[5] > 0:
-        freq[5] -= 1;
-        return 50 + _calcScore(freq)
-    else:
-       return 0
+def item_scorer(accum, item):
+    key, value = item
+    if key == 1:
+        accum += score_calculator(value, 1000, 100)
+    elif key in [2, 3, 4, 6]:
+        accum += score_calculator(value, 100 * key, 0)
+    elif key == 5:
+        accum += score_calculator(value, 500, 50)
+    return accum
+
+def score_calculator(count, three_score, single_score):
+    result = 0
+    if count // 3 > 0:
+        result += (count // 3) * three_score
+        count -= count // 3 * 3
+    if count > 0:
+        result += count * single_score
+    return result
 
 class AboutScoringProject(Koan):
     def test_score_of_an_empty_list_is_zero(self):
