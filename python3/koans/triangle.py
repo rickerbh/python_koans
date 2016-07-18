@@ -17,6 +17,7 @@
 #   about_triangle_project_2.py
 #
 def triangle(a, b, c):
+    validateTriangle(a, b, c)
     if a == b and b == c:
         return 'equilateral'
     elif a == b or b == c or a == c:
@@ -24,6 +25,12 @@ def triangle(a, b, c):
     else:
         return 'scalene'
 
+def validateTriangle(a, b, c):
+    if a <= 0 or b <= 0 or c <= 0:
+        raise TriangleError()
+    elif not (a + b > c and a + c > b and b + c > a):
+        raise TriangleError()
+    
 # Error class used in part 2.  No need to change this code.
 class TriangleError(Exception):
     pass
